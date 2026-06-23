@@ -170,3 +170,6 @@ NDVI is calculated from MODIS band reflectances and scaled by a factor of 0.0001
 2. Add a **Secret File** at `/etc/secrets/GEE_CREDENTIALS_JSON` containing your GEE service account JSON key.
 3. Set the `GEE_PROJECT_ID` variable in `ndvi_api.py` to your GCP project ID.
 4. Run `Call API/ten_min.py` locally (or on a separate free instance) to prevent cold starts.
+
+## How to Use
+Please view our demonstration powerpoint: https://docs.google.com/presentation/d/1VnsoueaX8pcoyEZgrUpVgF3KNwPTTwMMijMTJ-iNEOU/edit?usp=sharing
