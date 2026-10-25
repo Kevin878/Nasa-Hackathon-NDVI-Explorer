@@ -1,0 +1,7 @@
+numpy==1.26.4
+earthengine-api>=0.1.400
+rasterio==1.4.3
+matplotlib==3.9.2
+Flask==3.0.3
+flask-cors==5.0.0
+gunicorn==23.0.0

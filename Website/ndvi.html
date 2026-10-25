@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>什麼是 NDVI？ — NDVI Explorer</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="site-logo">NDVI Explorer</a>
+      <nav class="site-nav">
+        <a href="index.html" class="site-nav__link">首頁</a>
+        <a href="ndvi.html" class="site-nav__link is-active">什麼是 NDVI？</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <section class="ndvi-hero">
+      <div class="ndvi-hero__content">
+        <span class="ndvi-hero__eyebrow">Normalized Difference Vegetation Index</span>
+        <h1>什麼是 NDVI？</h1>
+        <p>
+          NDVI（常態化差值植生指標）透過分析衛星影像中的近紅外光與紅光反射差異，快速掌握植被健康狀況。健康葉片會反射更多近紅外光、吸收紅光，因此能以數值介於 -1 至 +1 的指標描述植物覆蓋度與生長力。
+        </p>
+      </div>
+    </section>
+
+    <section class="ndvi-cards">
+      <article class="ndvi-card">
+        <h2>為什麼 NDVI 有用？</h2>
+        <ul class="ndvi-list">
+          <li><strong>農業監測：</strong>追蹤作物生長、預估收成並提早偵測病蟲害或缺水區域。</li>
+          <li><strong>生態研究：</strong>觀察森林覆蓋率、草原退化與棲地變化的長期趨勢。</li>
+          <li><strong>氣候觀測：</strong>結合降雨與溫度資料，評估乾旱程度或極端氣候對植被的影響。</li>
+        </ul>
+      </article>
+
+      <article class="ndvi-card">
+        <h2>數值怎麼解讀？</h2>
+        <div class="ndvi-scale">
+          <div class="ndvi-scale__item">
+            <span class="ndvi-scale__value">&lt; 0</span>
+            <span class="ndvi-scale__label">水體或裸地</span>
+          </div>
+          <div class="ndvi-scale__item">
+            <span class="ndvi-scale__value">0.2 - 0.4</span>
+            <span class="ndvi-scale__label">稀疏草地 / 灌木</span>
+          </div>
+          <div class="ndvi-scale__item">
+            <span class="ndvi-scale__value">&gt; 0.6</span>
+            <span class="ndvi-scale__label">茂密森林 / 健康作物</span>
+          </div>
+        </div>
+        <p class="ndvi-card__note">解析時需留意雲霧遮擋、大氣條件及感測器差異對影像造成的影響。</p>
+      </article>
+    </section>
+
+    <section class="ndvi-extra">
+      <div class="ndvi-extra__inner">
+        <h2>從數據到決策</h2>
+        <p>
+          NDVI 僅是遙測分析的第一步。結合土壤水分、降雨量、地形等資料，就能打造專屬的植生監測系統，協助農業管理或環境治理快速做出反應。
+        </p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NDVI Explorer</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a href="index.html" class="site-logo">NDVI Explorer</a>
+      <nav class="site-nav">
+        <a href="index.html" class="site-nav__link is-active">首頁</a>
+        <a href="ndvi.html" class="site-nav__link">什麼是 NDVI？</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-content">
+    <section class="search-hero">
+      <h1>植被健康度即時查詢（Super NDVI Researcher）</h1>
+      <p>輸入座標與範圍，就能取得最新的 MODIS NDVI 熱力圖與平均值，協助你即時掌握植生狀態。</p>
+    </section>
+
+    <form id="search-form" class="search-form">
+      <div class="row">
+        <div>
+          <label for="lat">緯度（lat）</label>
+          <input id="lat" name="lat" type="number" step="0.0001" required />
+        </div>
+        <div>
+          <label for="lon">經度（lon）</label>
+          <input id="lon" name="lon" type="number" step="0.0001" required />
+        </div>
+        <div>
+          <label for="range">範圍（radius）</label>
+          <input id="range" name="range" type="number" step="1" max="1000" value="5" required />
+        </div>
+        <div>
+          <label for="unit">單位（unit）</label>
+          <select id="unit" name="unit" required>
+            <option value="M">公尺（Meter）</option>
+            <option value="K" selected>公里（Kilometer）</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="search-form__submit" id="submit-btn">查詢植生狀況（Search NDVI）</button>
+      <div class="error" id="error-box" hidden></div>
+      <div class="status-note" id="status-note" hidden></div>
+    </form>
+
+    <section class="result-card" id="result-card" hidden>
+      <header class="result-card__header">
+        <div>
+          <h2>分析摘要（analysis）</h2>
+          <p>以下為最新 MODIS 影像計算出的 NDVI 指標。</p>
+        </div>
+        <span class="result-card__pill" id="image-date-pill" hidden>
+          影像日期（Image date）:<strong id="image-date"></strong>
+        </span>
+      </header>
+
+      <div class="result-card__grid">
+        <div class="result-card__meta">
+          <div class="meta-item">
+            <span class="meta-item__label">輸入座標（Input coordinate）</span>
+            <span class="meta-item__value" id="meta-coord">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-item__label">分析範圍（Analyze range）</span>
+            <span class="meta-item__value" id="meta-range">-</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-item__label">平均 NDVI（Average NDVI value）</span>
+            <span class="meta-item__value" id="meta-ndvi">暫無資料</span>
+          </div>
+        </div>
+
+        <figure class="result-card__image">
+          <img id="result-image" src="" alt="NDVI Heatmap" />
+          <figcaption>NDVI 熱力圖（NDVI heatmap）</figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

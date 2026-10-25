@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Backend local virtualenv
+Nasa Data/.venv/
+
+# Frontend (static site, no deps)
+Website/node_modules/
