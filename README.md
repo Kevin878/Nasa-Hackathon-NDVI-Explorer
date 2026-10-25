@@ -14,20 +14,11 @@ Nasa Hackathon/
 │   ├── ndvi_api.py             # Main Flask app — GEE integration, NDVI processing, heatmap generation
 │   └── requirements.txt        # Python dependencies
 │
-├── Call API/
-│   └── ten_min.py              # Keep-alive script — pings the deployed API every 10 minutes
-│
-└── Website/                    # Node.js frontend server
-    ├── server.js               # Express server — proxies requests to the Flask API
-    ├── package.json
-    ├── public/
-    │   └── index.css           # Global stylesheet
-    └── views/
-        ├── index.ejs           # Home page — search form and results display
-        ├── ndvi.ejs            # Informational page explaining NDVI
-        └── partials/
-            ├── header.ejs      # Shared navigation header
-            └── footer.ejs      # Shared footer
+└── Website/                    # Static frontend (plain HTML/CSS/JS, no build step)
+    ├── index.html              # Home page — search form and results display
+    ├── ndvi.html               # Informational page explaining NDVI
+    ├── app.js                  # Calls the Flask API directly via fetch
+    └── index.css               # Global stylesheet
 ```
 
 ---
@@ -35,22 +26,19 @@ Nasa Hackathon/
 ## How It Works
 
 ```
-User (Browser)
-     │  POST /search (lat, lon, radius, unit)
+User (Browser) — static Website/ (index.html + app.js)
+     │  fetch GET /ndvi_heatmap?lat=…&lon=…&buffer_val=…&buffer_unit=…
      ▼
-Website/server.js  (Express, port 3000)
-     │  GET /ndvi_heatmap?lat=…&lon=…&buffer_val=…&buffer_unit=…
-     ▼
-Nasa Data/ndvi_api.py  (Flask, port 4000)
-     │  Authenticates with Google Earth Engine via service account
+Nasa Data/ndvi_api.py  (Flask, port 4000; CORS enabled)
+     │  Authenticates with Google Earth Engine via service account (once at startup)
      │  Queries MODIS/061/MOD13Q1 (±100 days around the requested date)
      │  Selects the best-quality mosaic image using qualityMosaic('NDVI')
      │  Downloads a GeoTIFF, reads it with Rasterio, generates a heatmap PNG
      ▼
-Returns JSON: { mean_ndvi, closest_image_date, ndvi_heatmap_png_base64 }
+Returns JSON: { status, mean_ndvi, closest_image_date, ndvi_heatmap_png_base64 }
      │
      ▼
-index.ejs renders the result card with the heatmap image and stats
+app.js renders the result card with the heatmap image and stats
 ```
 
 ---
@@ -85,21 +73,18 @@ python ndvi_api.py
 
 The API reads GEE credentials from `/etc/secrets/GEE_CREDENTIALS_JSON` (Render deployment) or falls back to default application credentials for local development.
 
-### 2. Express Website (`Website/`)
+### 2. Static Website (`Website/`)
+
+No install, no build step. Either open `Website/index.html` directly, or serve the folder:
 
 ```bash
 cd Website
-
-# Install dependencies
-npm install
-
-# Start the frontend server (port 3000)
-node server.js
+python3 -m http.server 8000
 ```
 
-Open `http://localhost:3000` in your browser.
+Open `http://localhost:8000` in your browser.
 
-> **Note:** The Express server expects the Flask API to be running at `http://127.0.0.1:4000`. Start the Flask API first.
+> **Note:** When opened on `localhost`/`127.0.0.1`, `app.js` automatically calls the local Flask API at `http://127.0.0.1:4000`, so start the Flask API first. Otherwise it uses the production API URL. Override with `?api=<url>` in the address bar.
 
 ---
 
@@ -138,15 +123,9 @@ curl "http://localhost:4000/ndvi_heatmap?lat=30.0&lon=120.0&buffer_val=10&buffer
 
 ---
 
-## Keep-Alive Script (`Call API/ten_min.py`)
+## Cold Starts
 
-Render's free tier spins down idle services. This script keeps the deployed API warm by sending a ping request every 10 minutes to a rotating set of coordinates.
-
-```bash
-python "Call API/ten_min.py"
-```
-
-It uses exponential backoff (up to 3 retries) on failure and logs results to stdout.
+Render's free tier spins down idle services, so the **first** `/ndvi_heatmap` request after a period of inactivity can take ~30–60s while the backend wakes up. The frontend shows a "waking the server" notice during this wait. The frontend itself is a static site and always loads instantly. A lightweight `GET /health` endpoint is available for uptime/warming checks.
 
 ---
 
@@ -164,12 +143,20 @@ NDVI is calculated from MODIS band reflectances and scaled by a factor of 0.0001
 
 ---
 
-## Deployment (Render)
+## Deployment
 
-1. Deploy `Nasa Data/` as a **Python web service** with start command `gunicorn ndvi_api:app`.
+**Backend — `Nasa Data/` (Render, Python web service):**
+
+1. Start command: `gunicorn ndvi_api:app`.
 2. Add a **Secret File** at `/etc/secrets/GEE_CREDENTIALS_JSON` containing your GEE service account JSON key.
-3. Set the `GEE_PROJECT_ID` variable in `ndvi_api.py` to your GCP project ID.
-4. Run `Call API/ten_min.py` locally (or on a separate free instance) to prevent cold starts.
+3. Set `GEE_PROJECT_ID` as an environment variable (defaults to `nasa-hackathon-474108`).
+
+**Frontend — `Website/` (static host, e.g. Cloudflare Pages / Vercel):**
+
+1. Point the project at the `Website/` directory with **no build command** (output = `Website/`).
+2. Update `PROD_API_URL` in `Website/app.js` to your deployed backend URL.
+
+The frontend calls the backend directly from the browser, so the backend must have CORS enabled (it does — `flask-cors` is configured in `ndvi_api.py`).
 
 ## How to Use
 Please view our demonstration powerpoint: https://docs.google.com/presentation/d/1VnsoueaX8pcoyEZgrUpVgF3KNwPTTwMMijMTJ-iNEOU/edit?usp=sharing
