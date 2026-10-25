@@ -1,0 +1,8 @@
+{
+  // Static-only frontend: serve the Website/ folder as assets, no Worker script.
+  "name": "nasa-hackathon-ndvi-explorer",
+  "compatibility_date": "2025-06-05",
+  "assets": {
+    "directory": "./Website"
+  }
+}
